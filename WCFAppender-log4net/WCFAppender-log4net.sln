@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 11
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFAppender-log4net", "WCFAppender-log4net\WCFAppender-log4net.csproj", "{01E1A5C1-988C-4011-8EC1-9126F2324920}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFAppenderUnitTests", "WCFAppenderUnitTests\WCFAppenderUnitTests.csproj", "{C896CF68-B2E9-4049-8CAB-233DB3EE284E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{756AC2B2-EA04-4EE7-9DC8-D89B4379700D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFServices", "WCFServices\WCFServices.csproj", "{6095059D-D544-4207-B023-F3EC62319907}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01E1A5C1-988C-4011-8EC1-9126F2324920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E1A5C1-988C-4011-8EC1-9126F2324920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E1A5C1-988C-4011-8EC1-9126F2324920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E1A5C1-988C-4011-8EC1-9126F2324920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6095059D-D544-4207-B023-F3EC62319907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6095059D-D544-4207-B023-F3EC62319907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6095059D-D544-4207-B023-F3EC62319907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6095059D-D544-4207-B023-F3EC62319907}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C896CF68-B2E9-4049-8CAB-233DB3EE284E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C896CF68-B2E9-4049-8CAB-233DB3EE284E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C896CF68-B2E9-4049-8CAB-233DB3EE284E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C896CF68-B2E9-4049-8CAB-233DB3EE284E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
