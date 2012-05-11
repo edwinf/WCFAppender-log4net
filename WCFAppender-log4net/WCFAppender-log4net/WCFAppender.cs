@@ -20,6 +20,18 @@ namespace WCFAppender_log4net
 		public string URL { get; set; }
 		public bool RenderOnClient { get; set; }
 
+		internal IWCFLogger LoggingChannel
+		{
+			get
+			{
+				return _LoggingService;
+			}
+			set
+			{
+				_LoggingService = value;
+			}
+		}
+
 		public WCFAppender()
 		{
 			RenderOnClient = true;
@@ -100,16 +112,19 @@ namespace WCFAppender_log4net
 		private bool ConfirmChannelAcceptable()
 		{
 			bool ret = true;
-			IClientChannel channel = _LoggingService as IClientChannel;
-			if (channel == null)
+			if (_LoggingService == null)
 			{
 				ret = CreateChannel();
 			}
-			else if (channel.State != CommunicationState.Opened)
+			else
 			{
-				LogLog.Debug(typeDescriptor, "Channel not in a good state, disposing and creating a new one");
-				channel.Dispose();
-				return CreateChannel();
+				IClientChannel channel = _LoggingService as IClientChannel;
+				if (channel != null && channel.State != CommunicationState.Opened)
+				{
+					LogLog.Debug(typeDescriptor, "Channel not in a good state, disposing and creating a new one");
+					channel.Dispose();
+					return CreateChannel();
+				}
 			}
 			return ret;
 		}
