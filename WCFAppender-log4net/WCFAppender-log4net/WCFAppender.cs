@@ -71,6 +71,12 @@ namespace WCFAppender_log4net
 					}
 					else
 					{
+						for (int i = 0; i < events.Length; i++)
+						{
+							//force the exception string to be calculated before serailziation, as the exception itself won't make the 
+							//trip to the server
+							events[i].GetExceptionString();
+						}
 						_LoggingService.Append(events);
 					}
 				}
