@@ -1,13 +1,28 @@
 ﻿using System;
+using System.Diagnostics;
+using System.ServiceModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WCFAppender_log4net.Interface;
 
 namespace WCFAppenderUnitTests
 {
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
 	public class TestLogger : IWCFLogger
 	{
-		public string[] LastLogOutput;
+		private static string[] _LastLogOutput;
 
+
+		public static string[] LastLogOutput
+		{
+			get
+			{
+				return _LastLogOutput;
+			}
+			set
+			{
+				_LastLogOutput = value;
+			}
+		}
 		public void Append(log4net.Core.LoggingEvent[] logEvents)
 		{
 			LastLogOutput = new string[logEvents.Length];

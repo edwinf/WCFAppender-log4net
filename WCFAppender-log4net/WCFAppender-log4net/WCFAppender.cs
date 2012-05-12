@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace WCFAppender_log4net
 
 		public WCFAppender()
 		{
-			RenderOnClient = true;
+			RenderOnClient = false;
 		}
 
 		public override void ActivateOptions()
@@ -119,7 +120,7 @@ namespace WCFAppender_log4net
 			else
 			{
 				IClientChannel channel = _LoggingService as IClientChannel;
-				if (channel != null && channel.State != CommunicationState.Opened)
+				if (channel != null && channel.State == CommunicationState.Faulted || channel.State == CommunicationState.Closed)
 				{
 					LogLog.Debug(typeDescriptor, "Channel not in a good state, disposing and creating a new one");
 					channel.Dispose();

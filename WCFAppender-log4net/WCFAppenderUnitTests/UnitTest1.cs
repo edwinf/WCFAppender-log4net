@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
+using System.ServiceModel.Description;
+using System.Threading;
 using log4net;
 using log4net.Config;
 using log4net.Layout;
@@ -30,9 +32,9 @@ namespace WCFAppenderUnitTests
 
 				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
 				log.Debug("This is the first message");
-				Assert.IsNotNull(logger.LastLogOutput);
-				Assert.IsTrue(logger.LastLogOutput.Length == 1);
-				Assert.IsTrue(logger.LastLogOutput[0].Trim() == "DEBUG - This is the first message");
+				Assert.IsNotNull(TestLogger.LastLogOutput);
+				Assert.IsTrue(TestLogger.LastLogOutput.Length == 1);
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "DEBUG - This is the first message");
 		}
 
 		[TestMethod]
@@ -53,9 +55,9 @@ namespace WCFAppenderUnitTests
 
 			ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
 			log.Debug("This is the first message");
-			Assert.IsNotNull(logger.LastLogOutput);
-			Assert.IsTrue(logger.LastLogOutput.Length == 1);
-			Assert.IsTrue(logger.LastLogOutput[0].Trim() == "SERVER - This is the first message");
+			Assert.IsNotNull(TestLogger.LastLogOutput);
+			Assert.IsTrue(TestLogger.LastLogOutput.Length == 1);
+			Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "SERVER - This is the first message");
 		}
 
 		[TestMethod]
@@ -70,6 +72,82 @@ namespace WCFAppenderUnitTests
 			Assert.IsNotNull(appender.LoggingChannel);
 			Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
 			Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IClientChannel));
+		}
+
+		[TestMethod]
+		public void TestWCFChannelWithClientRender()
+		{
+			TestLogger logger = new TestLogger();
+			using (ServiceHost host = new ServiceHost(logger, new Uri("http://localhost:8080/")))
+			{
+				host.AddServiceEndpoint(typeof(IWCFLogger), new BasicHttpBinding(), "Logger");
+				host.Open();
+
+				Thread.Sleep(3000);
+				ILoggerRepository rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+
+				WCFAppender_log4net.WCFAppender appender = new WCFAppender_log4net.WCFAppender();
+				appender.URL = "http://localhost:8080/logger";
+				appender.BufferSize = -1;
+				appender.Layout = new SimpleLayout();
+				appender.RenderOnClient = true;
+				appender.ActivateOptions();
+
+				Assert.IsNotNull(appender.LoggingChannel);
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IClientChannel));
+
+				BasicConfigurator.Configure(rep, appender);
+				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
+
+				log.Debug("Other side of the Channel!");
+
+
+				//Wait for the host to process the recieve
+				Thread.Sleep(2000);
+				
+				Assert.IsNotNull(TestLogger.LastLogOutput);
+				Assert.IsTrue(TestLogger.LastLogOutput.Length > 0);
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "DEBUG - Other side of the Channel!");
+				host.Close();
+			}
+		}
+
+		[TestMethod]
+		public void TestWCFChannelWithServerRender()
+		{
+			TestLogger logger = new TestLogger();
+			using (ServiceHost host = new ServiceHost(logger, new Uri("http://localhost:8080/")))
+			{
+				host.AddServiceEndpoint(typeof(IWCFLogger), new BasicHttpBinding(), "Logger");
+				host.Open();
+
+				Thread.Sleep(3000);
+				ILoggerRepository rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+
+				WCFAppender_log4net.WCFAppender appender = new WCFAppender_log4net.WCFAppender();
+				appender.URL = "http://localhost:8080/logger";
+				appender.BufferSize = -1;
+				appender.ActivateOptions();
+
+				Assert.IsNotNull(appender.LoggingChannel);
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IClientChannel));
+
+				BasicConfigurator.Configure(rep, appender);
+				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
+
+				log.Debug("Other side of the Channel!");
+
+
+				//Wait for the host to process the recieve
+				Thread.Sleep(2000);
+
+				Assert.IsNotNull(TestLogger.LastLogOutput);
+				Assert.IsTrue(TestLogger.LastLogOutput.Length > 0);
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "SERVER - Other side of the Channel!");
+				host.Close();
+			}
 		}
 	}
 }

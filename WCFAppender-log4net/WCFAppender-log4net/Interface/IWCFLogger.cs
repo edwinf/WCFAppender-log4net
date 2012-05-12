@@ -16,6 +16,7 @@ namespace WCFAppender_log4net.Interface
 		/// </summary>
 		/// <param name="logEvents"></param>
 		[OperationContract(Name="AppendLoggingEvents", IsOneWay=true)]
+		[UseNetDataContractSerializer]
 		void Append(log4net.Core.LoggingEvent[] logEvents);
 
 		/// <summary>
