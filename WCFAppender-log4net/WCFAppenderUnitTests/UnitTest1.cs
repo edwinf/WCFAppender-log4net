@@ -235,7 +235,7 @@ namespace WCFAppenderUnitTests
 
 				BasicConfigurator.Configure(rep, appender);
 				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
-
+				log4net.ThreadContext.Properties["Stack"] = "Push1";
 				log.Error("Other side of the Channel, with Exception!", new ArgumentNullException("RandomParameter"));
 
 

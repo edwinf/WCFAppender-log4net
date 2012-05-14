@@ -33,7 +33,8 @@ namespace WCFServices
 		{
 			//TODO: this is a placeholder.  Please implement your specific logic here if you plan to use this function, 
 			//or use a render layout that just uses the message itself.  The possible issue is that you depend entirely on the filter from 
-			//your client as do not have any concept of level, filters, etc.
+			//your client as do not have any concept of level, filters, etc.  The upside is that you don't need to worry about serializing anything across the wire, 
+			//much more interoperable.
 
 			for(int i=0;i<logEntries.Length;i++)
 			{

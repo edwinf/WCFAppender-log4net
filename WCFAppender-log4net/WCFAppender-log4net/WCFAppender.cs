@@ -41,6 +41,16 @@ namespace WCFAppender_log4net
 		public override void ActivateOptions()
 		{
 			base.ActivateOptions();
+
+			if (this.RenderOnClient)
+			{
+				this.Fix = log4net.Core.FixFlags.All;
+			}
+			else
+			{
+				//don't attempt to render the message or exception on the client
+				this.Fix = log4net.Core.FixFlags.All ^ log4net.Core.FixFlags.Message ^ log4net.Core.FixFlags.Exception;
+			}
 			CreateChannel();
 		}
 
