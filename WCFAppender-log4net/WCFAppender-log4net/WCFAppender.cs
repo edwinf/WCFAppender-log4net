@@ -81,13 +81,12 @@ namespace WCFAppender_log4net
 					}
 					else
 					{
+						LoggingEventWrapper[] wrappers = new LoggingEventWrapper[events.Length];
 						for (int i = 0; i < events.Length; i++)
 						{
-							//force the exception string to be calculated before serailziation, as the exception itself won't make the 
-							//trip to the server
-							events[i].GetExceptionString();
+							wrappers[i] = new LoggingEventWrapper(events[i]);
 						}
-						_LoggingService.Append(events);
+						_LoggingService.Append(wrappers);
 					}
 				}
 				catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.ServiceModel;
+using log4net.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WCFAppender_log4net.Interface;
 
@@ -23,12 +24,13 @@ namespace WCFAppenderUnitTests
 				_LastLogOutput = value;
 			}
 		}
-		public void Append(log4net.Core.LoggingEvent[] logEvents)
+		public void Append(LoggingEventWrapper[] logEvents)
 		{
 			LastLogOutput = new string[logEvents.Length];
 			for(int i=0;i<logEvents.Length;i++)
 			{
-				LastLogOutput[i] = "SERVER - " + logEvents[i].RenderedMessage;
+				LoggingEvent ev = logEvents[i].GetReconstructedLoggingEvent(null);
+				LastLogOutput[i] = "SERVER - " + ev.RenderedMessage;
 			}
 		}
 

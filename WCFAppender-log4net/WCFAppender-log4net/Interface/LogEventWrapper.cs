@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Principal;
@@ -36,9 +37,22 @@ namespace WCFAppender_log4net.Interface
 			_LoggedException = ev.ExceptionObject;
 		}
 
-		public LoggingEvent GetReconstructedLoggingEvent()
+		public LoggingEvent GetReconstructedLoggingEvent(ILoggerRepository renderingRepo)
 		{
-			LoggingEvent ret = new LoggingEvent(null, null, null, _LoggingEvent.Level, _MessageObject, _LoggedException);
+			LoggingEvent ret = new LoggingEvent(null, renderingRepo, null, _LoggingEvent.Level, _MessageObject, _LoggedException);
+
+			BindingFlags eFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			FieldInfo pi;
+
+			LoggingEventData data = _LoggingEvent.GetLoggingEventData(FixFlags.None);
+			//reset message so it gets rendered again 
+			data.Message = null;
+
+			pi = ret.GetType().GetField("m_data", eFlags);
+			if (pi != null)
+			{
+				pi.SetValue(ret, data);
+			}
 
 
 			//reflectivly set the rest of the properties.

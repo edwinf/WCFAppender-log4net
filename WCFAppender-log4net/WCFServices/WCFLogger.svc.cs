@@ -17,7 +17,7 @@ namespace WCFServices
 		/// Log the remote events directly to the currently defined logger
 		/// </summary>
 		/// <param name="logEvents">serialized logging events from the client</param>
-		public void Append(log4net.Core.LoggingEvent[] logEvents)
+		public void Append(LoggingEventWrapper[] logEvents)
 		{
 			for(int i=0;i<logEvents.Length;i++)
 			{
