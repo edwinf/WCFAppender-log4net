@@ -16,7 +16,7 @@ using WCFAppender_log4net.Interface;
 namespace WCFAppenderUnitTests
 {
 	[TestClass]
-	public class UnitTest1
+	public class AppenderTests
 	{
 		[TestMethod]
 		public void TestBasicRenderClientSide()
@@ -29,7 +29,6 @@ namespace WCFAppenderUnitTests
 				appender.Layout = new SimpleLayout();
 				appender.LoggingChannel = logger;
 				appender.RenderOnClient = true;
-
 				appender.ActivateOptions();
 
 				BasicConfigurator.Configure(rep,appender);
@@ -118,6 +117,46 @@ namespace WCFAppenderUnitTests
 		}
 
 		[TestMethod]
+		public void TestWCFChannelWithClientRenderWithNetTCPBinding()
+		{
+			TestLogger logger = new TestLogger();
+			using (ServiceHost host = new ServiceHost(logger, new Uri("net.tcp://localhost:8080/")))
+			{
+				host.AddServiceEndpoint(typeof(IWCFLogger), new NetTcpBinding(), "Logger");
+				host.Open();
+
+				Thread.Sleep(3000);
+				ILoggerRepository rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+
+				WCFAppender_log4net.WCFAppender appender = new WCFAppender_log4net.WCFAppender();
+				appender.URL = "net.tcp://localhost:8080/logger";
+				appender.BufferSize = -1;
+				appender.Layout = new SimpleLayout();
+				appender.RenderOnClient = true;
+				appender.BindingType = WCFAppender_log4net.BindingType.NETTCP;
+				appender.ActivateOptions();
+
+				Assert.IsNotNull(appender.LoggingChannel);
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IClientChannel));
+
+				BasicConfigurator.Configure(rep, appender);
+				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
+
+				log.Debug("Other side of the Channel!");
+
+
+				//Wait for the host to process the recieve
+				Thread.Sleep(2000);
+
+				Assert.IsNotNull(TestLogger.LastLogOutput);
+				Assert.IsTrue(TestLogger.LastLogOutput.Length > 0);
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "DEBUG - Other side of the Channel!");
+				host.Close();
+			}
+		}
+
+		[TestMethod]
 		public void TestWCFChannelWithServerRender()
 		{
 			TestLogger logger = new TestLogger();
@@ -133,6 +172,45 @@ namespace WCFAppenderUnitTests
 				appender.URL = "http://localhost:8080/logger";
 				appender.BufferSize = -1;
 				appender.ActivateOptions();
+
+				Assert.IsNotNull(appender.LoggingChannel);
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
+				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IClientChannel));
+
+				BasicConfigurator.Configure(rep, appender);
+				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
+
+				log.Debug("Other side of the Channel!");
+
+
+				//Wait for the host to process the recieve
+				Thread.Sleep(2000);
+
+				Assert.IsNotNull(TestLogger.LastLogOutput);
+				Assert.IsTrue(TestLogger.LastLogOutput.Length > 0);
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "SERVER - Other side of the Channel!");
+				host.Close();
+			}
+		}
+
+		[TestMethod]
+		public void TestWCFChannelWithServerRenderWithNetTCPBinding()
+		{
+			TestLogger logger = new TestLogger();
+			using (ServiceHost host = new ServiceHost(logger, new Uri("net.tcp://localhost:8080/")))
+			{
+				host.AddServiceEndpoint(typeof(IWCFLogger), new NetTcpBinding(), "Logger");
+				host.Open();
+
+				Thread.Sleep(3000);
+				ILoggerRepository rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+
+				WCFAppender_log4net.WCFAppender appender = new WCFAppender_log4net.WCFAppender();
+				appender.URL = "net.tcp://localhost:8080/logger";
+				appender.BufferSize = -1;
+				appender.BindingType = WCFAppender_log4net.BindingType.NETTCP;
+				appender.ActivateOptions();
+				
 
 				Assert.IsNotNull(appender.LoggingChannel);
 				Assert.IsInstanceOfType(appender.LoggingChannel, typeof(IWCFLogger));
@@ -197,7 +275,7 @@ namespace WCFAppenderUnitTests
 		{
 			DateTime now = DateTime.Now;
 			ArgumentNullException nullException = new ArgumentNullException("RandomParameter");
-			LoggingEvent ev = new LoggingEvent(typeof(UnitTest1), null, "Random", Level.Error, "This is my message", nullException);
+			LoggingEvent ev = new LoggingEvent(typeof(AppenderTests), null, "Random", Level.Error, "This is my message", nullException);
 
 			MemoryStream ms = new MemoryStream();
 			NetDataContractSerializer serializer = new NetDataContractSerializer();
@@ -236,7 +314,7 @@ namespace WCFAppenderUnitTests
 				BasicConfigurator.Configure(rep, appender);
 				ILog log = LogManager.GetLogger(rep.Name, "TestBasicPush");
 				log4net.ThreadContext.Properties["Stack"] = "Push1";
-				log.Error("Other side of the Channel, with Exception!", new ArgumentNullException("RandomParameter"));
+				log.Error("Other side of the Channel!", new ArgumentNullException("RandomParameter"));
 
 
 				//Wait for the host to process the recieve
@@ -244,9 +322,33 @@ namespace WCFAppenderUnitTests
 
 				Assert.IsNotNull(TestLogger.LastLogOutput);
 				Assert.IsTrue(TestLogger.LastLogOutput.Length > 0);
-				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "SERVER - Other side of the Channel!");
+				Assert.IsTrue(TestLogger.LastLogOutput[0].Trim() == "SERVER - Other side of the Channel!, with Exception!");
+				
 				host.Close();
 			}
+		}
+
+		[TestMethod]
+		public void TestXMLConfiguration()
+		{
+			string xml = @"<log4net>
+									<appender name=""WCFAppender"" type=""WCFAppender_log4net.WCFAppender, WCFAppender-log4net"">
+										<BindingType>HTTP</BindingType>
+										<RenderOnClient>True</RenderOnClient>
+										<URL>http://localhost:43573/WCFLogger.svc</URL>
+										<layout type=""log4net.Layout.PatternLayout"" value=""%date [%thread] %-5level %logger - %message%newline"" />
+									</appender>
+									<root>
+										<level value=""ALL"" />
+										<appender-ref ref=""WCFAppender"" />
+									</root>
+								</log4net>";
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(xml);
+			ILoggerRepository rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+			XmlConfigurator.Configure(rep, doc["log4net"]);
+			ILog log = LogManager.GetLogger(rep.Name, "XMLText");
+			log.Debug("Output");
 		}
 	}
 }

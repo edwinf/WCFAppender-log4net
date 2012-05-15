@@ -31,6 +31,10 @@ namespace WCFAppenderUnitTests
 			{
 				LoggingEvent ev = logEvents[i].GetReconstructedLoggingEvent(null);
 				LastLogOutput[i] = "SERVER - " + ev.RenderedMessage;
+				if (ev.ExceptionObject != null)
+				{
+					LastLogOutput[i] += ", with Exception!";
+				}
 			}
 		}
 

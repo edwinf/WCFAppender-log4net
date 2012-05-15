@@ -16,10 +16,31 @@ namespace WCFAppender_log4net
 {
 	public class WCFAppender : BufferingAppenderSkeleton
 	{
-		Type typeDescriptor = typeof(WCFAppender);
+		private Type typeDescriptor = typeof(WCFAppender);
 		private IWCFLogger _LoggingService;
+
+		/// <summary>
+		/// The URL to send the information to
+		/// </summary>
 		public string URL { get; set; }
+
+		/// <summary>
+		/// Whether to render the log event on the client or render the event on the server. Rendering is the act of transforming the log
+		/// objects and exceptions to the log message.  Either way, the originating information from the client will always be used. 
+		/// Defaults to False
+		/// </summary>
 		public bool RenderOnClient { get; set; }
+
+		/// <summary>
+		/// The WCF binding to use.  HTTP or NETTCP.  Defaults to HTTP
+		/// </summary>
+		public BindingType BindingType { get; set; }
+		
+		/// <summary>
+		/// If the configuration is non-basic, you can configure additional properties in the app config and give the binding a name.  Passing the name
+		/// in this parameter will create the configuration with that named value.
+		/// </summary>
+		public string BindingConfigurationName { get; set; }
 
 		internal IWCFLogger LoggingChannel
 		{
@@ -36,6 +57,7 @@ namespace WCFAppender_log4net
 		public WCFAppender()
 		{
 			RenderOnClient = false;
+			this.BindingType = WCFAppender_log4net.BindingType.HTTP;
 		}
 
 		public override void ActivateOptions()
@@ -122,7 +144,28 @@ namespace WCFAppender_log4net
 
 		private Binding ChooseBinding()
 		{
-			return new BasicHttpBinding();
+			if (this.BindingType == WCFAppender_log4net.BindingType.NETTCP)
+			{
+				if (String.IsNullOrWhiteSpace(this.BindingConfigurationName))
+				{
+					return new NetTcpBinding();
+				}
+				else
+				{
+					return new NetTcpBinding(this.BindingConfigurationName);
+				}
+			}
+			else
+			{
+				if (String.IsNullOrWhiteSpace(this.BindingConfigurationName))
+				{
+					return new BasicHttpBinding();
+				}
+				else
+				{
+					return new BasicHttpBinding(this.BindingConfigurationName);
+				}
+			}
 		}
 
 		private bool ConfirmChannelAcceptable()
@@ -135,7 +178,7 @@ namespace WCFAppender_log4net
 			else
 			{
 				IClientChannel channel = _LoggingService as IClientChannel;
-				if (channel != null && channel.State == CommunicationState.Faulted || channel.State == CommunicationState.Closed)
+				if (channel != null && (channel.State == CommunicationState.Faulted || channel.State == CommunicationState.Closed))
 				{
 					LogLog.Debug(typeDescriptor, "Channel not in a good state, disposing and creating a new one");
 					channel.Dispose();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Activation;
 using System.Text;
 using log4net;
 using WCFAppender_log4net.Interface;
@@ -11,7 +12,16 @@ namespace WCFServices
 {
 	public class WCFLogger : IWCFLogger
 	{
-		private ILog log = LogManager.GetLogger(typeof(WCFLogger));
+		private ILog log;
+		public WCFLogger()
+		{
+			if (!LogManager.GetRepository().Configured)
+			{
+				log4net.Config.XmlConfigurator.Configure();
+			}
+			log = LogManager.GetLogger(typeof(WCFLogger));
+		}
+		 
 
 		/// <summary>
 		/// Log the remote events directly to the currently defined logger
@@ -21,7 +31,7 @@ namespace WCFServices
 		{
 			for(int i=0;i<logEvents.Length;i++)
 			{
-				log.Logger.Log(logEvents[i]);
+				log.Logger.Log(logEvents[i].GetReconstructedLoggingEvent(log.Logger.Repository));
 			}
 		}
 
