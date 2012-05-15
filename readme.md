@@ -20,7 +20,6 @@ Log4Net WCF Appender
 </code></pre>
 
 3. 
-<pre>
 The WCF appender has two modes: render on client and render on service.  The render on client takes the log event data 
 and renders the log string on the client and sends it to the WCF service as a string.  This is the most interoperable as there is no object 
 serialization taking place.  The render on server is a little more complex, but offers the benifit of controlling the rendering in a central place, 
@@ -29,7 +28,7 @@ much match on the client and on the server for server side rendering to work.
 
 The implementations of both functions log to log4net on the server side for ease of configurability; however, this implementation is left open for you 
 to change however you'd like.
-</pre>
+
 4. License: 
    This appender is licensed under the apache 2 license.  Which basically means: 
 		a) use it / modify it however you want as long as you leave the copyright notice in the source.
