@@ -1,4 +1,4 @@
-AppFabricAppender
+Log4Net WCF Appender
 =================
 
 1. *Overview*
