@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.0</version>
+    <title>WCFAppender-Client-log4net</title>
+    <authors>edwinf</authors>
+    <owners>edwinf</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/edwinf/WCFAppender-log4net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>A buffering log4net appender that sends the logging events to a WCF Service.</summary>
+    <description>This package is a WCF Appender for log4net.  The interface has two modes, client rendering and server rendering.  This is to allow you the option to postpone the rendering of the event data if you want to be able to change rendering configuration without redeploying your clients.
+    	Example configurations can be found at the project site.
+    </description>
+    <releaseNotes>This is the initial release.  If you find any bugs, please report them to the project site so that they can be corrected</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>WCF log4net</tags>
+  </metadata>
+</package>

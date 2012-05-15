@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("WCFServices")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Rosetta")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WCFServices")]
-[assembly: AssemblyCopyright("Copyright © Rosetta 2012")]
+[assembly: AssemblyCopyright("Copyright © edwinf 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

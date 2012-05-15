@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WCFAppender-log4net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("This is a log4net appender that will serialize the contents ")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rosetta")]
 [assembly: AssemblyProduct("WCFAppender-log4net")]
-[assembly: AssemblyCopyright("Copyright © Rosetta 2012")]
+[assembly: AssemblyCopyright("Copyright © edwinf 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
