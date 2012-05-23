@@ -19,17 +19,18 @@ Log4Net WCF Appender
 &lt;/log4net&gt;
 </code></pre>
 
-3. 
+3.  The WCF Appender is based on the buffering appender.  The default buffer is 512 messages before they are sent in bulk to the service.  
+If you want real time transmission to the service, set the bufferSize to 0 as part of the appender definition. &lt;bufferSize value="0" /&gt; 
+
+4. 
 The WCF appender has two modes: render on client and render on service.  The render on client takes the log event data 
 and renders the log string on the client and sends it to the WCF service as a string.  This is the most interoperable as there is no object 
 serialization taking place.  The render on server is a little more complex, but offers the benifit of controlling the rendering in a central place, 
 and can be changed without redeploying your client.  The event is serialized to the server using .Net specific seralization, to avoid unknown type errors.  The type DLLs
-much match on the client and on the server for server side rendering to work.
-
-The implementations of both functions log to log4net on the server side for ease of configurability; however, this implementation is left open for you 
+much match on the client and on the server for server side rendering to work.  The implementations of both functions log to log4net on the server side for ease of configurability; however, this implementation is left open for you 
 to change however you'd like.
 
-4. License: 
+5. License: 
    This appender is licensed under the apache 2 license.  Which basically means: 
 		a) use it / modify it however you want as long as you leave the copyright notice in the source.
 		b) If you're just using the DLLs, you don't need to worry about anything.
